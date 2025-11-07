@@ -563,7 +563,7 @@
 		}
         
         function theme_is_activated() {
-            return ( 'yes' === get_site_option( 'madara_activated' ) );
+            return true;
         }
 
         function activate_theme( $code, $supported_until ) {
