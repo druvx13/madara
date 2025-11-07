@@ -98,71 +98,6 @@
                 
                 $core = Madara::getInstance();
                 
-                if (isset($_POST['validate_purchase_code'])){
-                    if(isset($_POST['purchase_code']) && $_POST['validate_purchase_code'] == 'activate'){
-                        $valid = true;
-                        $err = '';
-                        
-                        if(!isset($_POST['madara-registration-terms'])){
-                            $err = esc_html__("Please agree the registration terms", 'madara');;
-                        } else {
-                            $purchase_code = sanitize_text_field($_POST['purchase_code']);                        
-                            $result = $core->do_validate( $purchase_code );
-                            
-                            $err = $result['error'];                        
-                            
-                            if(empty($err)){
-                                $data = $result['data'];
-                                if($data){                        
-                                    if($data->result != 'error'){
-                                        // activate theme
-                                        $core = Madara::getInstance();
-                                        $core->activate_theme( $purchase_code, $data->support_until );                                        
-                                    } else {
-										
-										if($data->error_code == 110 || $data->error_code == 40){
-											
-											//$registered_domain = str_replace('Reached maximum activation. License key already in use on ','', $data->message);
-											//Reached maximum activation. 
-											//$registered_domain = str_replace('License key already in use on ','', $data->message);
-											
-											$registered_domain = isset($data->domain) ? $data->domain : '';
-											if(!$registered_domain){
-												if(strpos($data->message, "License key already in use on ") !== false){
-													$registered_domain = str_replace('License key already in use on ','', $data->message);
-												}
-											}
-											if($registered_domain == $_SERVER['SERVER_NAME']){
-												$core = Madara::getInstance();
-												$core->activate_theme( $purchase_code, isset($data->expired) ? $data->expired : '' );
-												
-												$err = esc_html__('Re-activate successfully. However, please deactivate & activate again to get correct license info','madara');
-												
-											} else {
-												$err = $data->message;
-											}
-										} else {
-											$err = $data->message;
-										}
-                                        
-                                    }
-                                } else {
-                                    $err = esc_html__('Bad request. Please try again later', 'madara');
-                                }                        
-                            }
-                        }
-                    } else {
-                        // deactivate
-                        $result = $core->do_deactivate();
-                        
-                        $err = $result['error'];
-                        
-                        if(empty($err) && isset($result['data'])){
-                            $core->deactivate_theme();                        
-                        }
-                    }
-                }
-                
                 $validate = $core->theme_is_activated();
                 
                 if($validate){
@@ -210,24 +145,6 @@
                                 <div class="container-fluid">
                                     <div class="row">
                                         <div class="col col-md-5 col-lg-3">
-                                            <div class="madara-welcome-item">
-                                                <i class="fas fa-check-circle activated"></i>
-                                                <form id="madara-deactivate-form" method="post" action="admin.php?page=madara-welcome">
-                                                    <?php
-                                                    $code = $core->get_censored_purchase_code();
-                                                    ?>                                        
-                                                    <h3><?php echo esc_html__( 'Theme Activated', 'madara' ); ?></h3>
-                                                    <p><label><input type="text" style="max-width:245px;width:100%" value="<?php echo esc_html($code);?>"/></label></p>
-                                                    <?php if(isset($err) && $err){?>
-                                                    <p class="error"><?php echo esc_html($err);?></p>
-                                                    <?php }?>
-                                                    <button onclick="return confirm('<?php echo esc_html__('Are you sure?','madara');?>')" type="submit" class="button button-secondary" name="validate_purchase_code" value="deactivate"><?php esc_html_e('Deactivate', 'madara');?></button>
-                                                    <p class="msg"><?php echo sprintf(esc_html__('Your premium support is valid until %s', 'madara'), $core->get_theme_support_date(false));?></p>
-                                                </form>                         
-                                            </div>
-											<?php do_action('madara_dashboard_license_info'); ?> 
-                                        </div>
-                                        <div class="col col-md-5 col-lg-3">
                                             <a class="madara-welcome-item" href="?page=<?php echo self::$page_slug; ?>&tab=document">
                                                 <i class="fa fa-book"></i>
                                                 <h3><?php echo esc_html__( 'Full Documents', 'madara' ); ?></h3>
@@ -257,40 +174,6 @@
                             </div>
                         </div>
 					<?php }
-                } else {
-                    ?>
-                    <div style="padding:15px" id="madara-registration-form">
-                        <h5><?php esc_html_e( 'Activate your theme', 'madara' ); ?></h5>
-                        <form method="post" action="admin.php?page=madara-welcome">
-                            <p>
-                                <label><?php esc_html_e('Item Purchase Code:', 'madara');?><input type="text" id="purchase_code" name="purchase_code" value="<?php echo isset($purchase_code) ? esc_attr($purchase_code) : '';?>"/></label> 
-                            </p>
-                            <?php if(isset($err) && $err){?>
-                            <p class="error"><?php echo esc_html($err);?></p>
-                            <?php }?>
-                            <p class="desc"><?php esc_html_e('This is the Code you received when you purchase our theme on MangaBooth.com','madara');?></p>
-                            <p> <button type="submit" class="button button-primary" name="validate_purchase_code" value="activate"><?php esc_html_e('Register', 'madara');?></button></p>
-                            
-                            <p>
-                                <label>
-                                    <input type="checkbox" required="required" name="madara-registration-terms" id="madara-registration-terms">&nbsp;
-                                    <?php
-                                    echo wp_kses_post(
-                                        sprintf(
-                                            _x(
-                                                'I give my consent to record my site address and purchase code in order to ensure <a href="%s" target="_blank">License</a> and copyright compliance. I understand that this information will be stored as long as the purchase code remains valid.',
-                                                'admin',
-                                                'madara'
-                                            ),
-                                            '#'
-                                        )
-                                    );
-                                    ?>
-                                    </label>
-                            </p>
-                        </form>
-                    </div>
-                    <?php
                 }
 				?>
             </div>
