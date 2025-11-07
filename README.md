@@ -7,14 +7,10 @@ This repository contains the Madara WordPress theme, a comprehensive solution fo
 ## Setup
 
 1.  **Installation:**
-    *   Upload the `madara`, `madara-child`, `madara-core`, and `madara-shortcodes` directories to your WordPress `wp-content/themes` directory.
-    *   Activate the "Madara Child" theme through the WordPress admin panel.
-
-2.  **Dependencies:**
-    *   This theme requires the `wp-manga` plugin to be installed and activated for full functionality.
+    *   Upload the `madara-core`, and `madara-shortcodes` directories to your WordPress `wp-content/plugins` directory.
+    *   Activate the `madara`, `madara-child`, theme through the WordPress admin panel after uploading them into `wp-content/plugins` directory.
 
 ## Usage
 
 *   **Theme Options:** Customize the theme's appearance and functionality through the WordPress Customizer.
-*   **Manga Management:** Use the `wp-manga` plugin to upload, manage, and display manga chapters.
 *   **Shortcodes:** Utilize the shortcodes provided by the `madara-shortcodes` plugin to add custom elements to your pages and posts.
